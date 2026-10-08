@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consilium Learning — Investment Decision Paths</title>
+  <meta name="description" content="An interactive framework to understand investment choices. Education only — not personalised advice.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== CSS CUSTOM PROPERTIES ===== */
+    :root {
+      /* Colors from Consilium palette */
+      --navy: #12242F;
+      --teal: #0E6E74;
+      --blue: #26527C;
+      --slate: #495863;
+      --gold: #B8862F;
+      --gold-soft: #D9B463;
+      --ink: #1F2A30;
+      --mute: #5B6B75;
+      --page: #FFFFFF;
+      --teal-light: #E9F3F3;
+      --blue-light: #EAF0F6;
+      --slate-light: #EEF0F2;
+      --gold-light: #F6EFDD;
+
+      /* Semantic colors */
+      --color-text: var(--ink);
+      --color-text-muted: var(--mute);
+      --color-bg: var(--page);
+      --color-bg-subtle: #F7F8F9;
+      --color-border: #E1E4E7;
+      --color-accent: var(--gold);
+      --color-accent-light: var(--gold-light);
+
+      /* Layer colors */
+      --color-objective: var(--teal);
+      --color-objective-light: var(--teal-light);
+      --color-constraints: var(--teal);
+      --color-constraints-light: var(--teal-light);
+      --color-product: var(--blue);
+      --color-product-light: var(--blue-light);
+      --color-vehicle: var(--blue);
+      --color-vehicle-light: var(--blue-light);
+      --color-provider: var(--slate);
+      --color-provider-light: var(--slate-light);
+      --color-account: var(--slate);
+      --color-account-light: var(--slate-light);
+      --color-rulesTax: var(--navy);
+      --color-rulesTax-light: #E8EAEC;
+
+      /* Typography */
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-size-xs: 0.75rem;
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.25rem;
+      --font-size-2xl: 1.5rem;
+      --font-size-3xl: 1.875rem;
+
+      /* Spacing */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+
+      /* Layout */
+      --gutter: 16px;
+      --max-width: 1200px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-normal: 250ms ease;
+    }
+
+    /* Dark mode */
+    [data-theme="dark"] {
+      --color-text: #E8EAEC;
+      --color-text-muted: #9BA5AD;
+      --color-bg: #0D1B22;
+      --color-bg-subtle: #152832;
+      --color-border: #2A3D48;
+      --color-accent: var(--gold-soft);
+      --color-accent-light: #2A2418;
+
+      --color-objective-light: #0D2E31;
+      --color-constraints-light: #0D2E31;
+      --color-product-light: #1A2E40;
+      --color-vehicle-light: #1A2E40;
+      --color-provider-light: #252D32;
+      --color-account-light: #252D32;
+      --color-rulesTax-light: #1A2228;
+    }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    h1 { font-size: var(--font-size-2xl); }
+    h2 { font-size: var(--font-size-xl); }
+    h3 { font-size: var(--font-size-lg); }
+
+    @media (min-width: 768px) {
+      h1 { font-size: var(--font-size-3xl); }
+      h2 { font-size: var(--font-size-2xl); }
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    a:hover, a:focus {
+      text-decoration: underline;
+    }
+
+    /* ===== LAYOUT ===== */
+    .container {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-4) 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .brand-name {
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    [data-theme="dark"] .brand-name {
+      color: var(--color-text);
+    }
+
+    .brand-tagline {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .theme-toggle {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      min-height: 44px;
+      min-width: 44px;
+      transition: background-color var(--transition-fast);
+    }
+
+    .theme-toggle:hover, .theme-toggle:focus {
+      background: var(--color-border);
+      outline: none;
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .theme-toggle .label {
+      display: none;
+    }
+
+    @media (min-width: 480px) {
+      .theme-toggle .label {
+        display: inline;
+      }
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      padding: var(--space-6) 0;
+    }
+
+    /* ===== MODE SELECTOR ===== */
+    .mode-selector {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-8);
+    }
+
+    .mode-btn {
+      background: var(--color-bg-subtle);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-5);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      min-height: 44px;
+      transition: all var(--transition-fast);
+    }
+
+    .mode-btn:hover {
+      background: var(--color-bg);
+      border-color: var(--color-border);
+    }
+
+    .mode-btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .mode-btn[aria-pressed="true"] {
+      background: var(--color-bg);
+      border-color: var(--color-accent);
+      color: var(--color-text);
+    }
+
+    /* ===== VIEW SECTIONS ===== */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* ===== WIZARD VIEW ===== */
+    .wizard-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+
+    .wizard-header h1 {
+      margin-bottom: var(--space-2);
+    }
+
+    .wizard-header .promise {
+      color: var(--color-text-muted);
+      font-size: var(--font-size-lg);
+      max-width: 600px;
+      margin: 0 auto var(--space-4);
+    }
+
+    .wizard-header .instruction {
+      color: var(--teal);
+      font-weight: 500;
+    }
+
+    /* Objective cards */
+    .objective-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+
+    @media (min-width: 480px) {
+      .objective-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .objective-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .objective-card {
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font-family);
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      transition: all var(--transition-fast);
+    }
+
+    .objective-card:hover {
+      border-color: var(--teal);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .objective-card:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .objective-card.selected {
+      border-color: var(--teal);
+      background: var(--color-objective-light);
+    }
+
+    .objective-card .icon {
+      width: 32px;
+      height: 32px;
+      color: var(--teal);
+    }
+
+    .objective-card .label {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .objective-card .blurb {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    /* Question steps */
+    .question-step {
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .question-step .step-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .question-step .step-number {
+      background: var(--teal);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .question-step .prompt {
+      font-size: var(--font-size-lg);
+      font-weight: 500;
+    }
+
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .option-btn {
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      text-align: left;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      cursor: pointer;
+      min-height: 44px;
+      transition: all var(--transition-fast);
+    }
+
+    .option-btn:hover {
+      border-color: var(--teal);
+      background: var(--color-objective-light);
+    }
+
+    .option-btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .option-btn[aria-checked="true"] {
+      border-color: var(--teal);
+      background: var(--color-objective-light);
+    }
+
+    .option-btn[aria-checked="true"]::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--teal);
+      border-radius: 50%;
+      margin-right: var(--space-2);
+    }
+
+    /* Back button */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      margin-bottom: var(--space-4);
+      border-radius: var(--radius-sm);
+      min-height: 44px;
+    }
+
+    .back-btn:hover {
+      color: var(--color-text);
+      background: var(--color-bg-subtle);
+    }
+
+    .back-btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .back-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== PATH VISUALIZATION ===== */
+    .path-chain {
+      margin: var(--space-8) 0;
+    }
+
+    .path-chain-title {
+      text-align: center;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-4);
+    }
+
+    .path-layers {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      position: relative;
+    }
+
+    @media (min-width: 1024px) {
+      .path-layers {
+        flex-direction: row;
+        justify-content: center;
+        gap: 0;
+      }
+    }
+
+    .path-layer {
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      position: relative;
+      opacity: 0.4;
+      transition: all var(--transition-normal);
+    }
+
+    .path-layer.active {
+      opacity: 1;
+    }
+
+    .path-layer.active[data-layer="objective"],
+    .path-layer.active[data-layer="constraints"] {
+      border-color: var(--teal);
+      background: var(--color-objective-light);
+    }
+
+    .path-layer.active[data-layer="product"],
+    .path-layer.active[data-layer="vehicle"] {
+      border-color: var(--blue);
+      background: var(--color-product-light);
+    }
+
+    .path-layer.active[data-layer="provider"],
+    .path-layer.active[data-layer="account"] {
+      border-color: var(--slate);
+      background: var(--color-provider-light);
+    }
+
+    .path-layer.active[data-layer="rulesTax"] {
+      border-color: var(--navy);
+      background: var(--color-rulesTax-light);
+    }
+
+    @media (min-width: 1024px) {
+      .path-layer {
+        flex: 1;
+        max-width: 160px;
+        margin: 0 -1px;
+        border-radius: 0;
+      }
+
+      .path-layer:first-child {
+        border-radius: var(--radius-md) 0 0 var(--radius-md);
+      }
+
+      .path-layer:last-child {
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      }
+    }
+
+    .path-layer-header {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-1);
+    }
+
+    .path-layer[data-layer="objective"] .path-layer-header,
+    .path-layer[data-layer="constraints"] .path-layer-header {
+      color: var(--teal);
+    }
+
+    .path-layer[data-layer="product"] .path-layer-header,
+    .path-layer[data-layer="vehicle"] .path-layer-header {
+      color: var(--blue);
+    }
+
+    .path-layer[data-layer="provider"] .path-layer-header,
+    .path-layer[data-layer="account"] .path-layer-header {
+      color: var(--slate);
+    }
+
+    .path-layer[data-layer="rulesTax"] .path-layer-header {
+      color: var(--navy);
+    }
+
+    [data-theme="dark"] .path-layer[data-layer="rulesTax"] .path-layer-header {
+      color: var(--color-text-muted);
+    }
+
+    .path-layer-content {
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      min-height: 1.4em;
+    }
+
+    .path-layer-content .chip {
+      display: inline-block;
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-sm);
+      padding: var(--space-1) var(--space-2);
+      font-size: var(--font-size-xs);
+      margin: var(--space-1) var(--space-1) 0 0;
+    }
+
+    /* Gold connector for active layers */
+    .path-layer.active::after {
+      content: "";
+      position: absolute;
+      background: var(--gold);
+    }
+
+    @media (max-width: 1023px) {
+      .path-layer.active:not(:last-child)::after {
+        left: 50%;
+        bottom: -10px;
+        width: 3px;
+        height: 12px;
+        transform: translateX(-50%);
+        z-index: 1;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .path-layer.active:not(:last-child)::after {
+        right: -6px;
+        top: 50%;
+        width: 12px;
+        height: 3px;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+    }
+
+    /* ===== RESULT VIEW ===== */
+    .result-section {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .result-header {
+      text-align: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .result-header h2 {
+      color: var(--teal);
+      margin-bottom: var(--space-2);
+    }
+
+    .result-note {
+      background: var(--gold-light);
+      border-left: 4px solid var(--gold);
+      padding: var(--space-4);
+      margin: var(--space-6) 0;
+      font-style: italic;
+      color: var(--color-text);
+    }
+
+    [data-theme="dark"] .result-note {
+      background: var(--color-accent-light);
+    }
+
+    /* Full path display */
+    .full-path {
+      margin: var(--space-6) 0;
+    }
+
+    .full-path-layer {
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      border-left: 4px solid var(--color-border);
+    }
+
+    .full-path-layer[data-layer="objective"],
+    .full-path-layer[data-layer="constraints"] {
+      border-left-color: var(--teal);
+    }
+
+    .full-path-layer[data-layer="product"],
+    .full-path-layer[data-layer="vehicle"] {
+      border-left-color: var(--blue);
+    }
+
+    .full-path-layer[data-layer="provider"],
+    .full-path-layer[data-layer="account"] {
+      border-left-color: var(--slate);
+    }
+
+    .full-path-layer[data-layer="rulesTax"] {
+      border-left-color: var(--navy);
+    }
+
+    .full-path-layer h4 {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+    }
+
+    .full-path-layer[data-layer="objective"] h4,
+    .full-path-layer[data-layer="constraints"] h4 { color: var(--teal); }
+    .full-path-layer[data-layer="product"] h4,
+    .full-path-layer[data-layer="vehicle"] h4 { color: var(--blue); }
+    .full-path-layer[data-layer="provider"] h4,
+    .full-path-layer[data-layer="account"] h4 { color: var(--slate); }
+    .full-path-layer[data-layer="rulesTax"] h4 { color: var(--navy); }
+
+    [data-theme="dark"] .full-path-layer[data-layer="rulesTax"] h4 {
+      color: var(--color-text-muted);
+    }
+
+    .full-path-layer ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .full-path-layer li {
+      background: var(--color-bg);
+      border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+    }
+
+    /* Learning panel */
+    .learning-panel {
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin: var(--space-8) 0;
+    }
+
+    .learning-panel h3 {
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .learning-panel h3 svg {
+      width: 24px;
+      height: 24px;
+      color: var(--teal);
+    }
+
+    .learning-links {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    @media (min-width: 768px) {
+      .learning-links {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .learning-link {
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      display: block;
+      color: var(--color-text);
+      text-decoration: none;
+      border: 1px solid var(--color-border);
+      transition: all var(--transition-fast);
+    }
+
+    .learning-link:hover {
+      border-color: var(--teal);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    .learning-link .title {
+      font-weight: 600;
+      color: var(--teal);
+      margin-bottom: var(--space-1);
+    }
+
+    .learning-link .summary {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    /* Safety panel */
+    .safety-panel {
+      background: var(--gold-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin: var(--space-8) 0;
+    }
+
+    [data-theme="dark"] .safety-panel {
+      background: var(--color-accent-light);
+    }
+
+    .safety-panel h3 {
+      color: var(--gold);
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .safety-panel h3 svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .safety-panel ol {
+      margin-left: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+
+    .safety-panel li {
+      margin-bottom: var(--space-2);
+      font-size: var(--font-size-sm);
+    }
+
+    .safety-panel .safety-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-4);
+    }
+
+    .safety-panel .safety-link {
+      background: var(--color-bg);
+      border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--teal);
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      margin: var(--space-6) 0;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .disclaimer strong {
+      color: var(--color-text);
+    }
+
+    /* Actions */
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      justify-content: center;
+      margin-top: var(--space-8);
+    }
+
+    .action-btn {
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-5);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      font-weight: 500;
+      color: var(--color-text);
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      transition: all var(--transition-fast);
+    }
+
+    .action-btn:hover {
+      border-color: var(--teal);
+      background: var(--color-objective-light);
+    }
+
+    .action-btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .action-btn.primary {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: white;
+    }
+
+    .action-btn.primary:hover {
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .action-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ===== EXPLORE VIEW ===== */
+    .explore-intro {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+
+    .explore-intro h2 {
+      margin-bottom: var(--space-2);
+    }
+
+    .explore-intro p {
+      color: var(--color-text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .explore-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .explore-objective {
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all var(--transition-fast);
+    }
+
+    .explore-objective:hover,
+    .explore-objective.highlighted {
+      border-color: var(--gold);
+      background: var(--color-bg);
+    }
+
+    .explore-objective:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .explore-objective-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .explore-objective-header .icon {
+      width: 40px;
+      height: 40px;
+      background: var(--color-objective-light);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--teal);
+    }
+
+    .explore-objective-header .icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .explore-objective-header h3 {
+      font-size: var(--font-size-lg);
+    }
+
+    .explore-paths {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .explore-path {
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      border-left: 3px solid var(--gold);
+    }
+
+    .explore-path-conditions {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .explore-path-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .explore-path-item {
+      font-size: var(--font-size-xs);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+    }
+
+    .explore-path-item.product { background: var(--color-product-light); color: var(--blue); }
+    .explore-path-item.vehicle { background: var(--color-vehicle-light); color: var(--blue); }
+    .explore-path-item.provider { background: var(--color-provider-light); color: var(--slate); }
+    .explore-path-item.account { background: var(--color-account-light); color: var(--slate); }
+    .explore-path-item.rulesTax { background: var(--color-rulesTax-light); }
+
+    .explore-back {
+      margin-top: var(--space-8);
+      text-align: center;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--color-bg-subtle);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-6) 0;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .footer-tagline {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-disclaimer {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ===== LOADING STATE ===== */
+    .loading {
+      text-align: center;
+      padding: var(--space-12);
+      color: var(--color-text-muted);
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--color-border);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto var(--space-4);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== SCREEN READER ONLY ===== */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ===== INFO PANEL ===== */
+    .info-panel-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 199;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition-normal), visibility var(--transition-normal);
+    }
+
+    .info-panel-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .info-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-bg);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-6);
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      max-height: 60vh;
+      overflow-y: auto;
+      z-index: 200;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-panel.active {
+      transform: translateY(0);
+    }
+
+    .info-panel-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: var(--space-2);
+    }
+
+    .info-panel-close {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      width: 36px;
+      height: 36px;
+      font-size: var(--font-size-xl);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      transition: all var(--transition-fast);
+    }
+
+    .info-panel-close:hover {
+      background: var(--color-border);
+      color: var(--color-text);
+    }
+
+    .info-panel-close:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .info-panel-content h3 {
+      font-size: var(--font-size-xl);
+      margin-bottom: var(--space-2);
+      color: var(--color-text);
+    }
+
+    .info-panel-content .info-type {
+      font-size: var(--font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-4);
+      font-weight: 600;
+    }
+
+    .info-panel-content .info-type.product,
+    .info-panel-content .info-type.vehicle {
+      color: var(--blue);
+    }
+
+    .info-panel-content .info-type.provider,
+    .info-panel-content .info-type.account {
+      color: var(--slate);
+    }
+
+    .info-panel-content .info-type.rulesTax {
+      color: var(--navy);
+    }
+
+    [data-theme="dark"] .info-panel-content .info-type.rulesTax {
+      color: var(--color-text-muted);
+    }
+
+    .info-panel-content .info-description {
+      font-size: var(--font-size-base);
+      line-height: 1.7;
+      color: var(--color-text);
+    }
+
+    .info-panel-content .placeholder {
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+
+    /* Info buttons in result list */
+    .info-btn {
+      background: var(--color-bg);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-family);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      transition: all var(--transition-fast);
+      text-align: left;
+      width: 100%;
+    }
+
+    .info-btn:hover {
+      background: var(--color-bg-subtle);
+    }
+
+    .info-btn:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .info-btn .info-icon {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      opacity: 0.6;
+      transition: opacity var(--transition-fast);
+    }
+
+    .info-btn:hover .info-icon {
+      opacity: 1;
+    }
+
+    /* Prevent body scroll when panel is open */
+    body.panel-open {
+      overflow: hidden;
+    }
+
+    /* Desktop: centered modal */
+    @media (min-width: 768px) {
+      .info-panel {
+        bottom: auto;
+        top: 50%;
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -50%) scale(0.95);
+        opacity: 0;
+        visibility: hidden;
+        max-width: 500px;
+        width: calc(100% - var(--space-8));
+        max-height: 70vh;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border);
+      }
+
+      .info-panel.active {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      .header, .footer, .mode-selector, .back-btn, .action-btn, .theme-toggle, .info-panel, .info-panel-overlay {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+        color: black;
+      }
+
+      .result-section {
+        max-width: none;
+      }
+
+      .learning-link, .full-path-layer, .safety-panel, .disclaimer {
+        break-inside: avoid;
+      }
+
+      /* Show items without button styling for print */
+      .info-btn {
+        padding: 0;
+        background: none;
+      }
+
+      .info-btn .info-icon {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-name">Consilium Learning</div>
+        <div class="brand-tagline">An investor-education initiative by Consilium Capital</div>
+      </div>
+      <button class="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none;">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <span class="label">Theme</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="mode-selector" role="tablist" aria-label="View mode">
+      <button class="mode-btn" role="tab" aria-selected="true" aria-controls="wizard-view" id="tab-wizard" type="button">
+        Guide me
+      </button>
+      <button class="mode-btn" role="tab" aria-selected="false" aria-controls="explore-view" id="tab-explore" type="button">
+        Explore the map
+      </button>
+    </nav>
+
+    <div id="app" aria-live="polite">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading investment paths...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Info Panel -->
+  <div id="info-panel" class="info-panel" role="dialog" aria-modal="true" aria-labelledby="info-panel-title">
+    <div class="info-panel-header">
+      <button class="info-panel-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="info-panel-content">
+      <h3 id="info-panel-title"></h3>
+      <p class="info-type"></p>
+      <p class="info-description"></p>
+    </div>
+  </div>
+  <div class="info-panel-overlay" aria-hidden="true"></div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">Consilium Learning</div>
+      <div class="footer-tagline">Understand your choices. Invest with confidence. Build for the long term.</div>
+      <div class="footer-disclaimer">
+        This tool is for education only. It shows a typical structure people use for a goal — it is not personalised investment advice.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ===== ICONS =====
+      const ICONS = {
+        umbrella: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/></svg>',
+        book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+        home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+        coins: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="M16.71 13.88l.7.71-2.82 2.82"/></svg>',
+        shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+        trend: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+        arrowLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>',
+        bookOpen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+        alertTriangle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+        map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>',
+        printer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>'
+      };
+
+      // ===== STATE =====
+      const state = {
+        data: null,
+        currentView: 'wizard', // 'wizard' or 'explore'
+        wizardStep: 'objectives', // 'objectives', 'constraints', 'result'
+        selectedObjective: null,
+        currentConstraintIndex: 0,
+        profile: {},
+        resolvedStructure: null
+      };
+
+      // ===== INLINE DATA (for file:// protocol support) =====
+      const INLINE_DATA = {
+        "meta": {
+          "name": "Consilium Learning — Investment Decision Paths",
+          "version": "1.0",
+          "note": "Education only, not personalised advice.",
+          "framework": ["objective", "constraints", "product", "vehicle", "provider", "account", "rulesTax"]
+        },
+        "config": {
+          "palette": {
+            "navy": "#12242F", "teal": "#0E6E74", "blue": "#26527C", "slate": "#495863",
+            "gold": "#B8862F", "goldSoft": "#D9B463", "ink": "#1F2A30", "mute": "#5B6B75",
+            "page": "#FFFFFF", "tealLight": "#E9F3F3", "blueLight": "#EAF0F6",
+            "slateLight": "#EEF0F2", "goldLight": "#F6EFDD"
+          },
+          "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+          "brand": {
+            "name": "Consilium Learning",
+            "tagline": "An investor-education initiative by Consilium Capital",
+            "promise": "Understand your choices. Invest with confidence. Build for the long term."
+          },
+          "disclaimer": "This tool is for education only. It shows a typical structure people use for a goal — it is not personalised investment advice. Confirm every provider is licensed and every product approved before you invest.",
+          "layers": [
+            { "id": "objective", "label": "Objective", "caption": "Why am I investing?", "color": "teal" },
+            { "id": "constraints", "label": "Constraints", "caption": "What limits or needs apply?", "color": "teal" },
+            { "id": "product", "label": "Product / Asset", "caption": "What does the money own?", "color": "blue" },
+            { "id": "vehicle", "label": "Vehicle / Wrapper", "caption": "How is it held or structured?", "color": "blue" },
+            { "id": "provider", "label": "Provider", "caption": "Who manages or safeguards it?", "color": "slate" },
+            { "id": "account", "label": "Account", "caption": "Where is ownership recorded?", "color": "slate" },
+            { "id": "rulesTax", "label": "Regulation & Tax", "caption": "Which rules and tax apply?", "color": "navy" }
+          ],
+          "safety": {
+            "title": "Before you invest — verify & protect",
+            "steps": [
+              "Confirm the provider is licensed (CMA, RBA, CBK, IRA or SASRA as relevant).",
+              "Confirm the product or scheme is approved where approval is required.",
+              "Check where the assets are held, and who the custodian or trustee is.",
+              "Be cautious of guaranteed or unusually high returns.",
+              "Know how to raise a complaint and keep records."
+            ],
+            "learn": ["verify-provider", "investor-protection", "regulation"]
+          }
+        },
+        "objectives": [
+          { "id": "retirement", "label": "Retirement income", "icon": "umbrella", "blurb": "Build an income for when you stop working." },
+          { "id": "school-fees", "label": "School fees", "icon": "book", "blurb": "Save for education costs at a known future date." },
+          { "id": "house-deposit", "label": "House deposit", "icon": "home", "blurb": "Grow a deposit you'll need in the next few years." },
+          { "id": "income", "label": "Regular income now", "icon": "coins", "blurb": "Generate income from your investments today." },
+          { "id": "emergency", "label": "Emergency reserve", "icon": "shield", "blurb": "Keep money safe and reachable for the unexpected." },
+          { "id": "wealth", "label": "Long-term wealth", "icon": "trend", "blurb": "Grow capital over the long term." }
+        ],
+        "constraints": {
+          "retirement": [
+            { "id": "scheme", "prompt": "Do you have an employer pension scheme?",
+              "options": [
+                { "id": "employer", "label": "Yes, through work", "sets": { "scheme": "employer" } },
+                { "id": "self", "label": "No / self-employed", "sets": { "scheme": "self" } }
+              ] },
+            { "id": "horizon", "prompt": "How long until you'll need this money?",
+              "options": [
+                { "id": "long", "label": "More than 15 years", "sets": { "horizon": "long" } },
+                { "id": "medium", "label": "5–15 years", "sets": { "horizon": "medium" } },
+                { "id": "short", "label": "Less than 5 years", "sets": { "horizon": "short" } }
+              ] }
+          ],
+          "school-fees": [
+            { "id": "horizon", "prompt": "When are the fees due?",
+              "options": [
+                { "id": "short", "label": "Within 3 years", "sets": { "horizon": "short" } },
+                { "id": "medium", "label": "3–7 years away", "sets": { "horizon": "medium" } }
+              ] }
+          ],
+          "house-deposit": [
+            { "id": "horizon", "prompt": "When do you plan to buy?",
+              "options": [
+                { "id": "short", "label": "Within 2 years", "sets": { "horizon": "short" } },
+                { "id": "medium", "label": "2–5 years away", "sets": { "horizon": "medium" } }
+              ] }
+          ],
+          "income": [
+            { "id": "risk", "prompt": "How much ups-and-downs can you accept for more income?",
+              "options": [
+                { "id": "lower", "label": "Keep it steady", "sets": { "risk": "lower" } },
+                { "id": "higher", "label": "Some swings are fine", "sets": { "risk": "higher" } }
+              ] }
+          ],
+          "emergency": [
+            { "id": "access", "prompt": "How quickly might you need the money?",
+              "options": [
+                { "id": "instant", "label": "Any time, instantly", "sets": { "access": "instant" } },
+                { "id": "notice", "label": "A few days' notice is fine", "sets": { "access": "notice" } }
+              ] }
+          ],
+          "wealth": [
+            { "id": "risk", "prompt": "What level of risk suits you?",
+              "options": [
+                { "id": "moderate", "label": "Moderate", "sets": { "risk": "moderate" } },
+                { "id": "higher", "label": "Higher, for more growth", "sets": { "risk": "higher" } }
+              ] },
+            { "id": "reach", "prompt": "Local only, or include foreign assets?",
+              "options": [
+                { "id": "local", "label": "Kenya only", "sets": { "reach": "local" } },
+                { "id": "offshore", "label": "Include offshore", "sets": { "reach": "offshore" } }
+              ] }
+          ]
+        },
+        "structures": [
+          {
+            "id": "ret-employer", "objective": "retirement", "when": { "scheme": "employer" },
+            "product": ["Government bonds", "Equities", "Money market funds"],
+            "vehicle": ["Occupational / umbrella pension scheme", "Optional personal IPP top-up"],
+            "provider": ["Scheme fund manager", "Trustee", "Custodian", "Administrator"],
+            "account": ["Pension-member account"],
+            "rulesTax": ["RBA scheme rules", "KRA relief on employer & employee contributions"],
+            "learn": ["retirement", "occupational", "pension-tax", "verify-provider"],
+            "note": "An employer scheme is often the first building block; a personal IPP can top it up."
+          },
+          {
+            "id": "ret-self-short", "objective": "retirement", "when": { "scheme": "self", "horizon": "short" },
+            "product": ["Government bonds", "Money market funds"],
+            "vehicle": ["Individual Pension Plan (IPP)", "Annuity or income drawdown at retirement"],
+            "provider": ["Fund manager", "Trustee", "Custodian", "Administrator", "Insurer (for an annuity)"],
+            "account": ["Pension-member account"],
+            "rulesTax": ["RBA scheme rules", "Tax treatment of withdrawals", "Annuity vs drawdown choices"],
+            "learn": ["retirement", "annuity-drawdown", "pension-tax", "verify-provider"],
+            "note": "Close to retirement, the focus shifts to preserving capital and choosing how to draw income."
+          },
+          {
+            "id": "ret-self-general", "objective": "retirement", "when": { "scheme": "self" },
+            "product": ["Government bonds", "Equities", "Money market funds"],
+            "vehicle": ["Individual Pension Plan (IPP)"],
+            "provider": ["Fund manager", "Trustee", "Custodian", "Administrator"],
+            "account": ["Pension-member account"],
+            "rulesTax": ["RBA scheme rules", "KRA pension tax relief on contributions"],
+            "learn": ["retirement", "ipp", "portfolio", "pension-tax", "verify-provider"],
+            "note": "A long runway lets a mix of growth and income assets work through an IPP."
+          },
+          {
+            "id": "fees-short", "objective": "school-fees", "when": { "horizon": "short" },
+            "product": ["Money market funds", "Treasury bills"],
+            "vehicle": ["Money market fund (CIS)", "Direct T-bills"],
+            "provider": ["Fund manager", "CBK (DhowCSD)"],
+            "account": ["CIS account", "DhowCSD account"],
+            "rulesTax": ["Withholding tax on interest"],
+            "learn": ["mmf", "govt-securities", "cis-unit-trust", "how-to-invest", "wht"],
+            "note": "With fees close, capital safety and easy access matter more than growth."
+          },
+          {
+            "id": "fees-medium", "objective": "school-fees", "when": { "horizon": "medium" },
+            "product": ["Balanced mix: bonds, equities and cash"],
+            "vehicle": ["Balanced CIS / unit trust", "Education policy"],
+            "provider": ["Fund manager", "Insurer"],
+            "account": ["CIS account"],
+            "rulesTax": ["Withholding tax on income"],
+            "learn": ["products", "cis-unit-trust", "portfolio", "wht"],
+            "note": "A few years of runway allows some growth alongside lower-risk holdings."
+          },
+          {
+            "id": "house-short", "objective": "house-deposit", "when": { "horizon": "short" },
+            "product": ["Money market funds", "Bank deposits", "Treasury bills"],
+            "vehicle": ["Money market fund", "Fixed deposit"],
+            "provider": ["Fund manager", "Bank"],
+            "account": ["CIS account", "Bank account"],
+            "rulesTax": ["Withholding tax on interest"],
+            "learn": ["mmf", "govt-securities", "how-to-invest", "wht"],
+            "note": "A near-term deposit should prioritise capital preservation and liquidity."
+          },
+          {
+            "id": "house-medium", "objective": "house-deposit", "when": { "horizon": "medium" },
+            "product": ["Short-to-medium government bonds", "Money market funds"],
+            "vehicle": ["Money market fund", "Direct Treasury bonds (DhowCSD)"],
+            "provider": ["Fund manager", "CBK"],
+            "account": ["CIS account", "DhowCSD account"],
+            "rulesTax": ["Withholding tax", "Tax treatment of specific issues"],
+            "learn": ["govt-securities", "mmf", "dhowcsd", "wht"],
+            "note": "A medium horizon can add bonds for a little more yield while staying lower-risk."
+          },
+          {
+            "id": "income-lower", "objective": "income", "when": { "risk": "lower" },
+            "product": ["Government bonds", "Money market funds", "Corporate bonds"],
+            "vehicle": ["Income-distributing fund", "Direct bonds (DhowCSD)"],
+            "provider": ["Fund manager", "Stockbroker"],
+            "account": ["CIS account", "DhowCSD account", "CDS account"],
+            "rulesTax": ["Withholding tax on interest"],
+            "learn": ["govt-securities", "bonds", "mmf", "wht"],
+            "note": "Bonds and money market funds give steadier income with lower volatility."
+          },
+          {
+            "id": "income-higher", "objective": "income", "when": { "risk": "higher" },
+            "product": ["Dividend-paying equities", "REITs", "Bonds"],
+            "vehicle": ["Direct securities", "Income funds"],
+            "provider": ["Stockbroker", "Fund manager"],
+            "account": ["CDS account", "CIS account"],
+            "rulesTax": ["Withholding tax on dividends", "Tax on rental / REIT income"],
+            "learn": ["equities", "property-reits", "bonds", "wht"],
+            "note": "Dividends and REITs can raise income, with more price movement to accept."
+          },
+          {
+            "id": "emg-instant", "objective": "emergency", "when": { "access": "instant" },
+            "product": ["Cash", "Money market funds", "Bank savings"],
+            "vehicle": ["Money market fund", "Savings account"],
+            "provider": ["Fund manager", "Bank"],
+            "account": ["CIS account", "Bank account"],
+            "rulesTax": ["Withholding tax on interest"],
+            "learn": ["start-investing", "mmf", "how-to-invest"],
+            "note": "An emergency reserve should stay safe and reachable, not chase returns."
+          },
+          {
+            "id": "emg-notice", "objective": "emergency", "when": { "access": "notice" },
+            "product": ["Money market funds", "Short fixed deposits", "Treasury bills"],
+            "vehicle": ["Money market fund", "Fixed deposit", "T-bills"],
+            "provider": ["Fund manager", "Bank", "CBK"],
+            "account": ["CIS account", "Bank account", "DhowCSD account"],
+            "rulesTax": ["Withholding tax", "Early-withdrawal terms"],
+            "learn": ["mmf", "govt-securities", "how-to-invest"],
+            "note": "If a few days' notice is fine, short deposits and T-bills can add a little yield."
+          },
+          {
+            "id": "wealth-offshore", "objective": "wealth", "when": { "reach": "offshore" },
+            "product": ["Equities", "ETFs", "Foreign assets", "Bonds"],
+            "vehicle": ["USD / offshore funds", "Brokerage account"],
+            "provider": ["Fund manager", "Stockbroker"],
+            "account": ["CIS account", "Offshore account", "CDS account"],
+            "rulesTax": ["Withholding tax", "Capital gains tax", "Foreign tax & currency effects"],
+            "learn": ["products", "etfs", "offshore", "portfolio", "cgt"],
+            "note": "Foreign assets add diversification and currency exposure to manage."
+          },
+          {
+            "id": "wealth-higher-local", "objective": "wealth", "when": { "risk": "higher", "reach": "local" },
+            "product": ["Equities", "ETFs", "Bonds"],
+            "vehicle": ["Equity CIS", "Brokerage account"],
+            "provider": ["Fund manager", "Stockbroker"],
+            "account": ["CDS account", "CIS account"],
+            "rulesTax": ["Withholding tax", "Capital gains tax on shares"],
+            "learn": ["equities", "etfs", "portfolio", "cgt"],
+            "note": "A higher-risk, local mix tilts toward equities and ETFs for growth."
+          },
+          {
+            "id": "wealth-local-moderate", "objective": "wealth", "when": { "reach": "local" },
+            "product": ["Equities", "Bonds", "Money market funds", "Property / REITs"],
+            "vehicle": ["Balanced / equity CIS", "Brokerage account"],
+            "provider": ["Fund manager", "Stockbroker"],
+            "account": ["CDS account", "CIS account"],
+            "rulesTax": ["Withholding tax", "Capital gains tax on shares"],
+            "learn": ["products", "equities", "portfolio", "cgt"],
+            "note": "A balanced local mix spreads risk across several asset types."
+          }
+        ],
+        "learning": {
+          "start-investing": { "title": "Start Investing", "url": "/learning/start-investing/", "summary": "Foundations: saving vs investing, risk, return and liquidity." },
+          "goals-planning": { "title": "Goals & Planning", "url": "/learning/goals-and-planning/", "summary": "Begin with your objective and the limits that shape your choices." },
+          "products": { "title": "Investment Products", "url": "/learning/investment-products/", "summary": "What your money can own and how each investment behaves." },
+          "mmf": { "title": "Money Market Funds", "url": "/learning/investment-products/", "summary": "Pooled funds holding short-term instruments; how yield and risk work." },
+          "govt-securities": { "title": "Government Securities", "url": "/learning/investment-products/", "summary": "Treasury bills and bonds — face value, coupon, yield and maturity." },
+          "bonds": { "title": "Bonds & Credit", "url": "/learning/investment-products/", "summary": "Government and corporate bonds, coupons, yield and credit risk." },
+          "equities": { "title": "Equities", "url": "/learning/investment-products/", "summary": "Owning part of a company — dividends, capital gains and risk." },
+          "etfs": { "title": "ETFs & Index Investing", "url": "/learning/investment-products/", "summary": "Low-cost, diversified funds that track an index." },
+          "property-reits": { "title": "Property & REITs", "url": "/learning/investment-products/", "summary": "Direct property vs listed property funds; yield and liquidity." },
+          "offshore": { "title": "Foreign & Offshore Investing", "url": "/learning/investment-products/", "summary": "Currency exposure, offshore funds and translating returns to shillings." },
+          "vehicles-accounts": { "title": "Vehicles & Accounts", "url": "/learning/vehicles-and-accounts/", "summary": "How investments are held, pooled and recorded." },
+          "cis-unit-trust": { "title": "CIS & Unit Trusts", "url": "/learning/vehicles-and-accounts/", "summary": "Pooled, professionally managed funds — units, NAV and fees." },
+          "ipp": { "title": "Individual Pension Plans (IPP)", "url": "/learning/retirement-and-pensions/", "summary": "A personal retirement wrapper — contributions, tax and access rules." },
+          "occupational": { "title": "Occupational & Umbrella Schemes", "url": "/learning/retirement-and-pensions/", "summary": "Employer-based retirement schemes and how they work." },
+          "annuity-drawdown": { "title": "Annuity vs Income Drawdown", "url": "/learning/retirement-and-pensions/", "summary": "Two ways to turn retirement savings into income." },
+          "retirement": { "title": "Retirement & Pensions", "url": "/learning/retirement-and-pensions/", "summary": "Build and protect long-term retirement savings." },
+          "cds": { "title": "CDS Accounts", "url": "/learning/vehicles-and-accounts/", "summary": "Where ownership of listed securities is recorded." },
+          "dhowcsd": { "title": "DhowCSD", "url": "/learning/how-to-invest/", "summary": "Direct access to government securities via the CBK platform." },
+          "portfolio": { "title": "Portfolio Construction", "url": "/learning/portfolio-construction/", "summary": "How separate products work together — allocation and diversification." },
+          "how-to-invest": { "title": "How to Invest", "url": "/learning/how-to-invest/", "summary": "Opening accounts, funding and placing an investment safely." },
+          "verify-provider": { "title": "Verify a Provider", "url": "/learning/investor-protection/", "summary": "Check a licence and confirm a product is approved before investing." },
+          "investor-protection": { "title": "Investor Protection", "url": "/learning/investor-protection/", "summary": "Spot scams, understand custody, and know how to complain." },
+          "regulation": { "title": "Regulation", "url": "/learning/regulation/", "summary": "CMA, RBA, CBK and the rules that protect investors." },
+          "tax": { "title": "Tax", "url": "/learning/tax/", "summary": "How tax affects the return you keep." },
+          "pension-tax": { "title": "Pension Tax Benefits", "url": "/learning/tax/", "summary": "Deductible contributions and the limits that apply." },
+          "wht": { "title": "Withholding Tax", "url": "/learning/tax/", "summary": "Tax deducted on interest and dividends." },
+          "cgt": { "title": "Capital Gains Tax", "url": "/learning/tax/", "summary": "Tax on gains when you sell certain assets." },
+          "glossary": { "title": "Glossary", "url": "/learning/glossary/", "summary": "Plain-language definitions of key terms." }
+        },
+        "education": {
+          // Products
+          "Government bonds": {
+            "type": "product",
+            "description": "Debt securities issued by the government. You lend money to the government and receive interest payments, typically every six months, plus your principal back at maturity. Considered low-risk because the government is unlikely to default."
+          },
+          "Equities": {
+            "type": "product",
+            "description": "Shares of ownership in companies. Returns come from dividends (company profits paid to shareholders) and capital gains (selling shares for more than you paid). Higher risk but historically higher long-term returns."
+          },
+          "Money market funds": {
+            "type": "product",
+            "description": "Pooled funds that invest in short-term, low-risk instruments like Treasury bills and bank deposits. They aim to preserve capital while providing modest returns, typically higher than savings accounts."
+          },
+          "Treasury bills": {
+            "type": "product",
+            "description": "Short-term government debt instruments, usually maturing in 91, 182, or 364 days. Sold at a discount and redeemed at face value. Very low risk and highly liquid."
+          },
+          "Balanced mix: bonds, equities and cash": {
+            "type": "product",
+            "description": "A diversified portfolio combining different asset types. Bonds provide stability and income, equities offer growth potential, and cash ensures liquidity. The mix balances risk and return."
+          },
+          "Corporate bonds": {
+            "type": "product",
+            "description": "Debt securities issued by companies. They typically pay higher interest than government bonds but carry more risk, as companies can default. Credit ratings help assess this risk."
+          },
+          "Dividend-paying equities": {
+            "type": "product",
+            "description": "Shares in companies that regularly distribute profits to shareholders. These provide income in addition to potential capital gains, often from established, profitable businesses."
+          },
+          "REITs": {
+            "type": "product",
+            "description": "Real Estate Investment Trusts pool investor money to own and manage income-producing property. They must distribute most profits as dividends, providing regular income without directly owning property."
+          },
+          "ETFs": {
+            "type": "product",
+            "description": "Exchange-Traded Funds are baskets of securities that trade like stocks. They offer instant diversification, low costs, and easy trading. Many track market indices passively."
+          },
+          "Foreign assets": {
+            "type": "product",
+            "description": "Investments denominated in currencies other than the Kenyan shilling. They provide diversification across economies but introduce currency risk — returns depend on both asset performance and exchange rate movements."
+          },
+          "Bank deposits": {
+            "type": "product",
+            "description": "Money held in bank accounts, including savings and fixed deposits. Very low risk as deposits are protected up to certain limits. Returns are typically modest but predictable."
+          },
+          "Cash": {
+            "type": "product",
+            "description": "The most liquid asset, instantly accessible for any use. Returns are minimal or zero, but cash provides complete flexibility and safety for short-term needs."
+          },
+          "Bank savings": {
+            "type": "product",
+            "description": "Money held in a bank savings account. Offers easy access, deposit protection, and modest interest. Suitable for emergency funds and short-term goals."
+          },
+          "Property / REITs": {
+            "type": "product",
+            "description": "Real estate investments, either direct property ownership or through REITs. Property can provide rental income and capital appreciation but requires significant capital and is less liquid than other assets."
+          },
+          "Short-to-medium government bonds": {
+            "type": "product",
+            "description": "Government bonds maturing in 2-7 years. They offer better yields than Treasury bills while maintaining relatively low risk. Prices can fluctuate with interest rates."
+          },
+          "Bonds": {
+            "type": "product",
+            "description": "Debt instruments where you lend money to an issuer (government or company) in exchange for regular interest payments and return of principal at maturity. Generally lower risk than equities."
+          },
+          "Short fixed deposits": {
+            "type": "product",
+            "description": "Bank deposits locked for short periods, typically 1-6 months. They pay higher interest than savings accounts in exchange for reduced flexibility."
+          },
+
+          // Vehicles
+          "Occupational / umbrella pension scheme": {
+            "type": "vehicle",
+            "description": "A retirement savings plan organized by your employer. Contributions from you and your employer are pooled and professionally invested. Benefits include tax relief and often employer matching."
+          },
+          "Individual Pension Plan (IPP)": {
+            "type": "vehicle",
+            "description": "A personal retirement savings wrapper registered with the RBA. Contributions may qualify for tax relief up to set limits. You choose from approved fund managers and investment options."
+          },
+          "Money market fund (CIS)": {
+            "type": "vehicle",
+            "description": "A Collective Investment Scheme that pools investor money into short-term, low-risk instruments. Managed by licensed fund managers with daily valuation and typically easy redemption."
+          },
+          "Direct T-bills": {
+            "type": "vehicle",
+            "description": "Treasury bills purchased directly from the Central Bank through DhowCSD, rather than through a fund. You get the full yield without fund management fees."
+          },
+          "Balanced CIS / unit trust": {
+            "type": "vehicle",
+            "description": "A Collective Investment Scheme that invests across multiple asset classes — typically equities, bonds, and cash. Professional managers adjust allocations based on market conditions and fund objectives."
+          },
+          "Education policy": {
+            "type": "vehicle",
+            "description": "An insurance-linked savings product designed for education funding. Combines savings with life cover, ensuring funds are available even if the parent dies. May include premium waivers on death."
+          },
+          "Fixed deposit": {
+            "type": "vehicle",
+            "description": "A bank product where you deposit money for a fixed term at an agreed interest rate. Breaking the deposit early usually incurs penalties. Suitable for known future expenses."
+          },
+          "Direct Treasury bonds (DhowCSD)": {
+            "type": "vehicle",
+            "description": "Government bonds purchased directly through the CBK's DhowCSD platform. Longer maturities than T-bills (2-25 years), paying interest every six months with principal returned at maturity."
+          },
+          "Income-distributing fund": {
+            "type": "vehicle",
+            "description": "A CIS that regularly pays out income to investors rather than reinvesting it. Suitable for those who need regular cash flow from their investments."
+          },
+          "Direct bonds (DhowCSD)": {
+            "type": "vehicle",
+            "description": "Government securities purchased directly through the Central Bank's electronic platform. Eliminates intermediary fees and provides direct ownership recorded in your DhowCSD account."
+          },
+          "Direct securities": {
+            "type": "vehicle",
+            "description": "Stocks or bonds bought directly through a broker rather than through a pooled fund. You own the actual securities and make your own buy/sell decisions."
+          },
+          "Income funds": {
+            "type": "vehicle",
+            "description": "Collective Investment Schemes focused on generating regular income for investors. They typically hold dividend-paying stocks, bonds, and other income-producing assets."
+          },
+          "Savings account": {
+            "type": "vehicle",
+            "description": "A basic bank account that earns interest on deposits. Offers high liquidity and deposit protection, making it suitable for emergency reserves and short-term savings."
+          },
+          "USD / offshore funds": {
+            "type": "vehicle",
+            "description": "Investment funds denominated in foreign currencies, typically US dollars. They provide exposure to international markets and currency diversification but introduce exchange rate risk."
+          },
+          "Brokerage account": {
+            "type": "vehicle",
+            "description": "An account with a licensed stockbroker that allows you to buy and sell securities on the stock exchange. Required for trading listed shares and some bonds."
+          },
+          "Equity CIS": {
+            "type": "vehicle",
+            "description": "A Collective Investment Scheme that primarily invests in company shares. Offers diversified equity exposure with professional management, suitable for long-term growth goals."
+          },
+          "Annuity or income drawdown at retirement": {
+            "type": "vehicle",
+            "description": "Two ways to convert pension savings into retirement income. An annuity provides guaranteed income for life. Income drawdown keeps your fund invested while you withdraw periodically."
+          },
+          "T-bills": {
+            "type": "vehicle",
+            "description": "Short-term government securities that can be held directly or through funds. Mature in under a year, providing a safe, liquid investment for short-term funds."
+          },
+          "Optional personal IPP top-up": {
+            "type": "vehicle",
+            "description": "Additional voluntary contributions to an Individual Pension Plan beyond employer scheme contributions. Allows you to boost retirement savings while potentially gaining more tax relief."
+          },
+
+          // Providers
+          "Fund manager": {
+            "type": "provider",
+            "description": "A licensed professional or company that invests pooled money on behalf of clients according to a stated strategy. They select securities, monitor performance, and handle administration."
+          },
+          "Trustee": {
+            "type": "provider",
+            "description": "An independent party that holds assets on behalf of investors and ensures the fund manager follows the rules. They protect investor interests and approve major fund decisions."
+          },
+          "Custodian": {
+            "type": "provider",
+            "description": "A financial institution that safely holds securities and other assets on behalf of investors. They keep assets separate from the fund manager to protect against fraud or insolvency."
+          },
+          "Administrator": {
+            "type": "provider",
+            "description": "Handles the operational aspects of investment schemes — maintaining records, processing transactions, preparing statements, and ensuring regulatory compliance."
+          },
+          "Insurer": {
+            "type": "provider",
+            "description": "A licensed insurance company that provides insurance-linked products like education policies and annuities. They pool risk and guarantee certain benefits in exchange for premiums."
+          },
+          "CBK (DhowCSD)": {
+            "type": "provider",
+            "description": "The Central Bank of Kenya operates DhowCSD, the electronic platform for buying government securities directly. It records ownership and handles coupon payments."
+          },
+          "Bank": {
+            "type": "provider",
+            "description": "A licensed deposit-taking institution that offers savings accounts, fixed deposits, and other banking services. Deposits are protected up to certain limits by deposit insurance."
+          },
+          "Stockbroker": {
+            "type": "provider",
+            "description": "A licensed intermediary who executes buy and sell orders for securities on your behalf. They provide access to the stock exchange and often offer research and advice."
+          },
+          "Scheme fund manager": {
+            "type": "provider",
+            "description": "The fund manager specifically appointed to manage a pension scheme's investments. They work within the scheme's investment policy set by the trustees."
+          },
+          "Insurer (for an annuity)": {
+            "type": "provider",
+            "description": "An insurance company that provides annuities — products that convert a lump sum into guaranteed income payments for life or a set period."
+          },
+
+          // Accounts
+          "Pension-member account": {
+            "type": "account",
+            "description": "Your individual record within a pension scheme showing contributions, investment returns, and accumulated benefits. Your portion of the pooled fund is tracked here."
+          },
+          "CIS account": {
+            "type": "account",
+            "description": "An account with a Collective Investment Scheme where your units or shares are recorded. Shows your holdings, transactions, and current value based on the fund's NAV."
+          },
+          "DhowCSD account": {
+            "type": "account",
+            "description": "Your account with the Central Bank's electronic registry for government securities. Records your direct holdings of Treasury bills and bonds."
+          },
+          "Bank account": {
+            "type": "account",
+            "description": "An account at a commercial bank for deposits, payments, and savings. Various types exist — current, savings, fixed deposit — each with different features."
+          },
+          "CDS account": {
+            "type": "account",
+            "description": "A Central Depository System account that records ownership of shares and other securities traded on the Nairobi Securities Exchange. Required for trading listed securities."
+          },
+          "Offshore account": {
+            "type": "account",
+            "description": "An investment account held with a foreign institution, typically for accessing international markets and currency diversification. Subject to both local and foreign regulations."
+          },
+
+          // Rules & Tax
+          "RBA scheme rules": {
+            "type": "rulesTax",
+            "description": "Regulations set by the Retirement Benefits Authority governing pension schemes. They cover contribution limits, investment guidelines, benefit calculations, and member protections."
+          },
+          "KRA relief on employer & employee contributions": {
+            "type": "rulesTax",
+            "description": "Tax benefits where pension contributions reduce taxable income. Both employer and employee contributions qualify for relief, up to statutory limits set by KRA."
+          },
+          "Tax treatment of withdrawals": {
+            "type": "rulesTax",
+            "description": "Rules governing how pension withdrawals are taxed. A portion may be tax-free, with the remainder taxed at graduated rates. Early withdrawal before retirement may face penalties."
+          },
+          "Withholding tax on interest": {
+            "type": "rulesTax",
+            "description": "Tax automatically deducted from interest income before you receive it. Currently 15% for residents on most interest income, though some government securities may be exempt."
+          },
+          "Withholding tax on income": {
+            "type": "rulesTax",
+            "description": "Tax deducted at source from various income types before payment. The rate varies by income type, and the tax paid is usually final for residents."
+          },
+          "Withholding tax on dividends": {
+            "type": "rulesTax",
+            "description": "Tax deducted from dividend payments before you receive them. Currently 5% for residents on dividends from companies listed on the NSE."
+          },
+          "Capital gains tax": {
+            "type": "rulesTax",
+            "description": "Tax on profit made when selling certain assets for more than you paid. Currently 15% on gains from property and other specified assets."
+          },
+          "Capital gains tax on shares": {
+            "type": "rulesTax",
+            "description": "Tax on profits from selling shares. Listed securities traded on the NSE are currently exempt, but unlisted shares may attract capital gains tax."
+          },
+          "Tax on rental / REIT income": {
+            "type": "rulesTax",
+            "description": "Tax treatment of income from property. Direct rental income is taxed as part of total income. REIT distributions may have different treatment depending on structure."
+          },
+          "Foreign tax & currency effects": {
+            "type": "rulesTax",
+            "description": "Considerations when investing abroad. Returns are affected by foreign tax (potentially reclaimable under treaties) and exchange rate movements between the foreign currency and shilling."
+          },
+          "KRA pension tax relief on contributions": {
+            "type": "rulesTax",
+            "description": "Tax deduction available for pension contributions. Currently up to KES 20,000 per month can be deducted from taxable income for qualifying pension contributions."
+          },
+          "Annuity vs drawdown choices": {
+            "type": "rulesTax",
+            "description": "At retirement, you choose how to access your pension. An annuity provides guaranteed lifetime income. Income drawdown keeps funds invested with flexible withdrawals. Tax treatment differs."
+          },
+          "Early-withdrawal terms": {
+            "type": "rulesTax",
+            "description": "Conditions and penalties for accessing funds before maturity or retirement. Pension schemes have strict early access rules. Fixed deposits may forfeit interest if broken early."
+          },
+          "Tax treatment of specific issues": {
+            "type": "rulesTax",
+            "description": "Some government securities have special tax features. Infrastructure bonds, for example, may offer tax exemption on interest to encourage investment in development projects."
+          },
+          "Withholding tax": {
+            "type": "rulesTax",
+            "description": "Tax deducted at source before you receive income. Applied to interest, dividends, and other payments. Rates vary by income type and resident status."
+          }
+        }
+      };
+
+      // ===== DATA LOADER =====
+      async function loadData() {
+        try {
+          // Try to fetch external JSON first (works when served via HTTP)
+          const response = await fetch('consilium_paths.json');
+          if (!response.ok) throw new Error('Failed to load data');
+          state.data = await response.json();
+        } catch (error) {
+          // Fall back to inline data (works with file:// protocol)
+          console.log('Using inline data (file:// mode)');
+          state.data = INLINE_DATA;
+        }
+        render();
+      }
+
+      // ===== HELPERS =====
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function formatType(type) {
+        const labels = {
+          product: 'Product / Asset',
+          vehicle: 'Vehicle / Wrapper',
+          provider: 'Provider',
+          account: 'Account',
+          rulesTax: 'Regulation & Tax'
+        };
+        return labels[type] || type;
+      }
+
+      // ===== INFO PANEL =====
+      function showInfoPanel(itemName, itemType) {
+        const education = state.data.education || {};
+        const info = education[itemName];
+
+        const panel = document.getElementById('info-panel');
+        const overlay = document.querySelector('.info-panel-overlay');
+        const titleEl = panel.querySelector('#info-panel-title');
+        const typeEl = panel.querySelector('.info-type');
+        const descEl = panel.querySelector('.info-description');
+
+        titleEl.textContent = itemName;
+        typeEl.textContent = formatType(itemType);
+        typeEl.className = 'info-type ' + itemType;
+
+        if (info && info.description) {
+          descEl.textContent = info.description;
+          descEl.className = 'info-description';
+        } else {
+          descEl.textContent = 'More information coming soon.';
+          descEl.className = 'info-description placeholder';
+        }
+
+        panel.classList.add('active');
+        overlay.classList.add('active');
+        document.body.classList.add('panel-open');
+
+        // Focus the close button for accessibility
+        panel.querySelector('.info-panel-close').focus();
+      }
+
+      function hideInfoPanel() {
+        const panel = document.getElementById('info-panel');
+        const overlay = document.querySelector('.info-panel-overlay');
+
+        panel.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.classList.remove('panel-open');
+      }
+
+      // ===== RESOLVER =====
+      function resolve(objectiveId, profile) {
+        const candidates = state.data.structures.filter(s => s.objective === objectiveId);
+
+        for (const s of candidates) {
+          const conditions = s.when || {};
+          const matches = Object.entries(conditions).every(([k, v]) => profile[k] === v);
+          if (matches) return s;
+        }
+
+        return candidates[candidates.length - 1];
+      }
+
+      // ===== THEME MANAGEMENT =====
+      function initTheme() {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+        updateThemeIcon(theme);
+      }
+
+      function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateThemeIcon(next);
+      }
+
+      function updateThemeIcon(theme) {
+        const btn = document.querySelector('.theme-toggle');
+        const sunIcon = btn.querySelector('.icon-sun');
+        const moonIcon = btn.querySelector('.icon-moon');
+
+        if (theme === 'dark') {
+          sunIcon.style.display = 'none';
+          moonIcon.style.display = 'block';
+        } else {
+          sunIcon.style.display = 'block';
+          moonIcon.style.display = 'none';
+        }
+      }
+
+      // ===== RENDER FUNCTIONS =====
+      function render() {
+        const app = document.getElementById('app');
+
+        if (state.currentView === 'wizard') {
+          app.innerHTML = renderWizard();
+        } else {
+          app.innerHTML = renderExplore();
+        }
+
+        setupEventListeners();
+      }
+
+      function renderWizard() {
+        if (state.wizardStep === 'objectives') {
+          return renderObjectiveSelection();
+        } else if (state.wizardStep === 'constraints') {
+          return renderConstraintQuestion();
+        } else {
+          return renderResult();
+        }
+      }
+
+      function renderObjectiveSelection() {
+        const objectives = state.data.objectives;
+
+        return `
+          <section id="wizard-view" class="view active" role="tabpanel" aria-labelledby="tab-wizard">
+            <div class="wizard-header">
+              <h1>Investment Decision Framework</h1>
+              <p class="promise">${state.data.config.brand.promise}</p>
+              <p class="instruction">Start with your goal</p>
+            </div>
+
+            <div class="objective-grid" role="radiogroup" aria-label="Select your investment objective">
+              ${objectives.map(obj => `
+                <button class="objective-card" type="button" role="radio" aria-checked="false" data-objective="${obj.id}">
+                  <span class="icon" aria-hidden="true">${ICONS[obj.icon] || ''}</span>
+                  <span class="label">${obj.label}</span>
+                  <span class="blurb">${obj.blurb}</span>
+                </button>
+              `).join('')}
+            </div>
+          </section>
+        `;
+      }
+
+      function renderConstraintQuestion() {
+        const objective = state.data.objectives.find(o => o.id === state.selectedObjective);
+        const constraints = state.data.constraints[state.selectedObjective] || [];
+        const currentConstraint = constraints[state.currentConstraintIndex];
+
+        if (!currentConstraint) {
+          state.resolvedStructure = resolve(state.selectedObjective, state.profile);
+          state.wizardStep = 'result';
+          return renderResult();
+        }
+
+        const stepNumber = state.currentConstraintIndex + 1;
+        const totalSteps = constraints.length;
+
+        return `
+          <section id="wizard-view" class="view active" role="tabpanel" aria-labelledby="tab-wizard">
+            <button class="back-btn" type="button" data-action="back">
+              ${ICONS.arrowLeft}
+              <span>Back</span>
+            </button>
+
+            <div class="question-step">
+              <div class="step-header">
+                <span class="step-number" aria-label="Step ${stepNumber} of ${totalSteps}">${stepNumber}</span>
+                <span class="prompt">${currentConstraint.prompt}</span>
+              </div>
+
+              <div class="option-group" role="radiogroup" aria-label="${currentConstraint.prompt}">
+                ${currentConstraint.options.map(opt => `
+                  <button class="option-btn" type="button" role="radio"
+                    aria-checked="${state.profile[currentConstraint.id] === Object.values(opt.sets)[0] ? 'true' : 'false'}"
+                    data-constraint="${currentConstraint.id}"
+                    data-option="${opt.id}"
+                    data-sets='${JSON.stringify(opt.sets)}'>
+                    ${opt.label}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            ${renderPathChain()}
+          </section>
+        `;
+      }
+
+      function renderPathChain() {
+        const layers = state.data.config.layers;
+        const objective = state.data.objectives.find(o => o.id === state.selectedObjective);
+        const constraints = state.data.constraints[state.selectedObjective] || [];
+
+        // Determine which layers are active
+        const answeredConstraints = constraints.slice(0, state.currentConstraintIndex).map(c => {
+          const value = state.profile[c.id];
+          const option = c.options.find(o => Object.values(o.sets)[0] === value);
+          return option ? option.label : '';
+        }).filter(Boolean);
+
+        // If we have enough answers, try to resolve
+        let structure = null;
+        if (Object.keys(state.profile).length > 0) {
+          structure = resolve(state.selectedObjective, state.profile);
+        }
+
+        return `
+          <div class="path-chain">
+            <div class="path-chain-title">Your investment path</div>
+            <div class="path-layers">
+              ${layers.map((layer, index) => {
+                let isActive = false;
+                let content = '';
+
+                if (layer.id === 'objective' && state.selectedObjective) {
+                  isActive = true;
+                  content = objective.label;
+                } else if (layer.id === 'constraints' && answeredConstraints.length > 0) {
+                  isActive = true;
+                  content = answeredConstraints.map(c => `<span class="chip">${c}</span>`).join('');
+                } else if (structure && ['product', 'vehicle', 'provider', 'account', 'rulesTax'].includes(layer.id)) {
+                  const items = structure[layer.id];
+                  if (items && items.length > 0) {
+                    isActive = true;
+                    content = items[0] + (items.length > 1 ? ` <span class="chip">+${items.length - 1}</span>` : '');
+                  }
+                }
+
+                return `
+                  <div class="path-layer ${isActive ? 'active' : ''}" data-layer="${layer.id}">
+                    <div class="path-layer-header">${layer.label}</div>
+                    <div class="path-layer-content">${content || '—'}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderResult() {
+        const objective = state.data.objectives.find(o => o.id === state.selectedObjective);
+        const constraints = state.data.constraints[state.selectedObjective] || [];
+        const structure = state.resolvedStructure;
+        const layers = state.data.config.layers;
+        const learning = state.data.learning;
+        const safety = state.data.config.safety;
+        const disclaimer = state.data.config.disclaimer;
+
+        // Get selected constraint labels
+        const constraintLabels = constraints.map(c => {
+          const value = state.profile[c.id];
+          const option = c.options.find(o => Object.values(o.sets)[0] === value);
+          return option ? option.label : '';
+        }).filter(Boolean);
+
+        // Build learning links
+        const learnIds = structure.learn || [];
+        const learnLinks = learnIds.map(id => learning[id]).filter(Boolean);
+
+        // Safety learning links
+        const safetyLinks = (safety.learn || []).map(id => learning[id]).filter(Boolean);
+
+        return `
+          <section id="wizard-view" class="view active" role="tabpanel" aria-labelledby="tab-wizard">
+            <button class="back-btn" type="button" data-action="back">
+              ${ICONS.arrowLeft}
+              <span>Back</span>
+            </button>
+
+            <div class="result-section">
+              <div class="result-header">
+                <h2>A typical structure for: ${objective.label}</h2>
+                <p>Based on your answers, here's what people commonly use for this goal.</p>
+              </div>
+
+              <div class="full-path">
+                <div class="full-path-layer" data-layer="objective">
+                  <h4>Objective</h4>
+                  <ul><li>${objective.label}</li></ul>
+                </div>
+
+                <div class="full-path-layer" data-layer="constraints">
+                  <h4>Constraints</h4>
+                  <ul>${constraintLabels.map(l => `<li>${l}</li>`).join('')}</ul>
+                </div>
+
+                <div class="full-path-layer" data-layer="product">
+                  <h4>Product / Asset</h4>
+                  <ul>${structure.product.map(p => `<li><button class="info-btn" type="button" data-item="${escapeHtml(p)}" data-type="product">${escapeHtml(p)}<span class="info-icon" aria-hidden="true">ⓘ</span></button></li>`).join('')}</ul>
+                </div>
+
+                <div class="full-path-layer" data-layer="vehicle">
+                  <h4>Vehicle / Wrapper</h4>
+                  <ul>${structure.vehicle.map(v => `<li><button class="info-btn" type="button" data-item="${escapeHtml(v)}" data-type="vehicle">${escapeHtml(v)}<span class="info-icon" aria-hidden="true">ⓘ</span></button></li>`).join('')}</ul>
+                </div>
+
+                <div class="full-path-layer" data-layer="provider">
+                  <h4>Provider</h4>
+                  <ul>${structure.provider.map(p => `<li><button class="info-btn" type="button" data-item="${escapeHtml(p)}" data-type="provider">${escapeHtml(p)}<span class="info-icon" aria-hidden="true">ⓘ</span></button></li>`).join('')}</ul>
+                </div>
+
+                <div class="full-path-layer" data-layer="account">
+                  <h4>Account</h4>
+                  <ul>${structure.account.map(a => `<li><button class="info-btn" type="button" data-item="${escapeHtml(a)}" data-type="account">${escapeHtml(a)}<span class="info-icon" aria-hidden="true">ⓘ</span></button></li>`).join('')}</ul>
+                </div>
+
+                <div class="full-path-layer" data-layer="rulesTax">
+                  <h4>Regulation & Tax</h4>
+                  <ul>${structure.rulesTax.map(r => `<li><button class="info-btn" type="button" data-item="${escapeHtml(r)}" data-type="rulesTax">${escapeHtml(r)}<span class="info-icon" aria-hidden="true">ⓘ</span></button></li>`).join('')}</ul>
+                </div>
+              </div>
+
+              <div class="result-note">
+                ${structure.note}
+              </div>
+
+              <div class="safety-panel">
+                <h3>${ICONS.alertTriangle} ${safety.title}</h3>
+                <ol>
+                  ${safety.steps.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+                <div class="safety-links">
+                  ${safetyLinks.map(link => `
+                    <a href="${link.url}" target="_blank" rel="noopener" class="safety-link">${link.title}</a>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="learning-panel">
+                <h3>${ICONS.bookOpen} Learn about each step</h3>
+                <div class="learning-links">
+                  ${learnLinks.map(link => `
+                    <a href="${link.url}" target="_blank" rel="noopener" class="learning-link">
+                      <div class="title">${link.title}</div>
+                      <div class="summary">${link.summary}</div>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="disclaimer">
+                <strong>Important:</strong> ${disclaimer}
+              </div>
+
+              <div class="result-actions">
+                <button class="action-btn primary" type="button" data-action="start-over">
+                  ${ICONS.refresh}
+                  <span>Start over</span>
+                </button>
+                <button class="action-btn" type="button" data-action="explore">
+                  ${ICONS.map}
+                  <span>See the whole map</span>
+                </button>
+                <button class="action-btn" type="button" onclick="window.print()">
+                  ${ICONS.printer}
+                  <span>Save / Print</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        `;
+      }
+
+      function renderExplore() {
+        const objectives = state.data.objectives;
+        const structures = state.data.structures;
+        const constraints = state.data.constraints;
+
+        return `
+          <section id="explore-view" class="view active" role="tabpanel" aria-labelledby="tab-explore">
+            <div class="explore-intro">
+              <h2>The Investment Framework Map</h2>
+              <p>Explore all investment paths by objective. Select a goal to see the typical structures people use.</p>
+            </div>
+
+            <div class="explore-grid">
+              ${objectives.map(obj => {
+                const objStructures = structures.filter(s => s.objective === obj.id);
+                const objConstraints = constraints[obj.id] || [];
+
+                return `
+                  <div class="explore-objective" tabindex="0" data-objective="${obj.id}">
+                    <div class="explore-objective-header">
+                      <div class="icon">${ICONS[obj.icon] || ''}</div>
+                      <h3>${obj.label}</h3>
+                    </div>
+                    <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-4);">${obj.blurb}</p>
+
+                    <div class="explore-paths">
+                      ${objStructures.map(s => {
+                        // Build condition description
+                        const conditions = Object.entries(s.when || {}).map(([key, value]) => {
+                          const constraint = objConstraints.find(c => c.id === key);
+                          if (!constraint) return value;
+                          const option = constraint.options.find(o => Object.values(o.sets)[0] === value);
+                          return option ? option.label : value;
+                        });
+
+                        return `
+                          <div class="explore-path">
+                            <div class="explore-path-conditions">
+                              ${conditions.length > 0 ? 'When: ' + conditions.join(' + ') : 'General path'}
+                            </div>
+                            <div class="explore-path-items">
+                              ${s.product.slice(0, 2).map(p => `<span class="explore-path-item product">${p}</span>`).join('')}
+                              ${s.vehicle.slice(0, 1).map(v => `<span class="explore-path-item vehicle">${v}</span>`).join('')}
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="explore-back">
+              <button class="action-btn primary" type="button" data-action="guide">
+                ${ICONS.arrowLeft}
+                <span>Back to guided view</span>
+              </button>
+            </div>
+
+            <div class="disclaimer" style="margin-top: var(--space-8);">
+              <strong>Important:</strong> ${state.data.config.disclaimer}
+            </div>
+          </section>
+        `;
+      }
+
+      // ===== EVENT HANDLING =====
+      function setupEventListeners() {
+        const app = document.getElementById('app');
+
+        // Objective selection
+        app.querySelectorAll('.objective-card').forEach(card => {
+          card.addEventListener('click', () => selectObjective(card.dataset.objective));
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectObjective(card.dataset.objective);
+            }
+          });
+        });
+
+        // Option selection
+        app.querySelectorAll('.option-btn').forEach(btn => {
+          btn.addEventListener('click', () => selectOption(btn));
+          btn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectOption(btn);
+            }
+          });
+        });
+
+        // Back button
+        app.querySelectorAll('[data-action="back"]').forEach(btn => {
+          btn.addEventListener('click', goBack);
+        });
+
+        // Start over
+        app.querySelectorAll('[data-action="start-over"]').forEach(btn => {
+          btn.addEventListener('click', startOver);
+        });
+
+        // Explore view
+        app.querySelectorAll('[data-action="explore"]').forEach(btn => {
+          btn.addEventListener('click', () => switchView('explore'));
+        });
+
+        // Guide view
+        app.querySelectorAll('[data-action="guide"]').forEach(btn => {
+          btn.addEventListener('click', () => switchView('wizard'));
+        });
+
+        // Info buttons
+        app.querySelectorAll('.info-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            showInfoPanel(btn.dataset.item, btn.dataset.type);
+          });
+        });
+
+        // Explore objective highlighting
+        app.querySelectorAll('.explore-objective').forEach(obj => {
+          obj.addEventListener('click', () => {
+            app.querySelectorAll('.explore-objective').forEach(o => o.classList.remove('highlighted'));
+            obj.classList.add('highlighted');
+          });
+          obj.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              app.querySelectorAll('.explore-objective').forEach(o => o.classList.remove('highlighted'));
+              obj.classList.add('highlighted');
+            }
+          });
+        });
+      }
+
+      function selectObjective(objectiveId) {
+        state.selectedObjective = objectiveId;
+        state.currentConstraintIndex = 0;
+        state.profile = {};
+        state.wizardStep = 'constraints';
+        render();
+        focusFirstOption();
+      }
+
+      function selectOption(btn) {
+        const constraintId = btn.dataset.constraint;
+        const sets = JSON.parse(btn.dataset.sets);
+
+        // Merge sets into profile
+        Object.assign(state.profile, sets);
+
+        // Move to next constraint
+        state.currentConstraintIndex++;
+
+        // Check if we have all constraints
+        const constraints = state.data.constraints[state.selectedObjective] || [];
+        if (state.currentConstraintIndex >= constraints.length) {
+          state.resolvedStructure = resolve(state.selectedObjective, state.profile);
+          state.wizardStep = 'result';
+        }
+
+        render();
+
+        if (state.wizardStep === 'constraints') {
+          focusFirstOption();
+        }
+      }
+
+      function goBack() {
+        if (state.wizardStep === 'result') {
+          // Go back to last constraint
+          const constraints = state.data.constraints[state.selectedObjective] || [];
+          state.currentConstraintIndex = constraints.length - 1;
+
+          // Remove the last answer from profile
+          const lastConstraint = constraints[state.currentConstraintIndex];
+          if (lastConstraint) {
+            delete state.profile[lastConstraint.id];
+          }
+
+          state.wizardStep = 'constraints';
+          state.resolvedStructure = null;
+        } else if (state.wizardStep === 'constraints') {
+          if (state.currentConstraintIndex > 0) {
+            // Go to previous constraint
+            state.currentConstraintIndex--;
+            const constraints = state.data.constraints[state.selectedObjective] || [];
+            const currentConstraint = constraints[state.currentConstraintIndex];
+            if (currentConstraint) {
+              delete state.profile[currentConstraint.id];
+            }
+          } else {
+            // Go back to objective selection
+            state.wizardStep = 'objectives';
+            state.selectedObjective = null;
+            state.profile = {};
+          }
+        }
+
+        render();
+
+        if (state.wizardStep === 'constraints') {
+          focusFirstOption();
+        }
+      }
+
+      function startOver() {
+        state.wizardStep = 'objectives';
+        state.selectedObjective = null;
+        state.currentConstraintIndex = 0;
+        state.profile = {};
+        state.resolvedStructure = null;
+        render();
+      }
+
+      function switchView(view) {
+        state.currentView = view;
+
+        // Update tab buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+          const isSelected = (view === 'wizard' && btn.id === 'tab-wizard') ||
+                            (view === 'explore' && btn.id === 'tab-explore');
+          btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        });
+
+        render();
+      }
+
+      function focusFirstOption() {
+        setTimeout(() => {
+          const firstOption = document.querySelector('.option-btn, .objective-card');
+          if (firstOption) firstOption.focus();
+        }, 100);
+      }
+
+      // ===== KEYBOARD NAVIGATION =====
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          // First check if info panel is open
+          const infoPanel = document.getElementById('info-panel');
+          if (infoPanel && infoPanel.classList.contains('active')) {
+            hideInfoPanel();
+            return;
+          }
+          // Otherwise, go back in wizard
+          if (state.wizardStep !== 'objectives') {
+            goBack();
+          }
+        }
+
+        // Arrow navigation in radio groups
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          const focused = document.activeElement;
+          if (focused && (focused.classList.contains('option-btn') || focused.classList.contains('objective-card'))) {
+            e.preventDefault();
+            const siblings = Array.from(focused.parentElement.children).filter(
+              el => el.classList.contains('option-btn') || el.classList.contains('objective-card')
+            );
+            const index = siblings.indexOf(focused);
+            const next = siblings[(index + 1) % siblings.length];
+            if (next) next.focus();
+          }
+        }
+
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          const focused = document.activeElement;
+          if (focused && (focused.classList.contains('option-btn') || focused.classList.contains('objective-card'))) {
+            e.preventDefault();
+            const siblings = Array.from(focused.parentElement.children).filter(
+              el => el.classList.contains('option-btn') || el.classList.contains('objective-card')
+            );
+            const index = siblings.indexOf(focused);
+            const prev = siblings[(index - 1 + siblings.length) % siblings.length];
+            if (prev) prev.focus();
+          }
+        }
+      });
+
+      // ===== MODE SELECTOR =====
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const view = btn.id === 'tab-wizard' ? 'wizard' : 'explore';
+          switchView(view);
+        });
+      });
+
+      // ===== THEME TOGGLE =====
+      document.querySelector('.theme-toggle').addEventListener('click', toggleTheme);
+
+      // ===== INFO PANEL CLOSE HANDLERS =====
+      document.querySelector('.info-panel-close').addEventListener('click', hideInfoPanel);
+      document.querySelector('.info-panel-overlay').addEventListener('click', hideInfoPanel);
+
+      // ===== INIT =====
+      initTheme();
+      loadData();
+
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+          updateThemeIcon(e.matches ? 'dark' : 'light');
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>
